@@ -1,4 +1,4 @@
-Ruby-RTL-SDR
+turRTLshell
 ============
 
 A ruby interface for librtlsdr
