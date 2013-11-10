@@ -9,4 +9,17 @@ Gem::Specification.new do |s|
   s.files = ['lib/turtleshell.rb']
   s.homepage = 'http://github.com/tjarratt/turtleshell'
   s.license = 'MIT'
+  s.require_path = 'lib'
+
+  s.add_development_dependency 'rake',  '~> 10.1'
+  s.add_development_dependency 'rspec', '~> 2.14'
+
+  ignores  = File.readlines('.gitignore').grep(/\S+/).map(&:chomp)
+  dotfiles = %w[.gitignore]
+
+  all_files_without_ignores = Dir['**/*'].reject { |f|
+    File.directory?(f) || ignores.any? { |i| File.fnmatch(i, f) }
+  }
+
+  s.files = (all_files_without_ignores + dotfiles).sort
 end
