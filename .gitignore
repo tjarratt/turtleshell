@@ -1,3 +1,4 @@
 *.gem
-ext/*.bundle
-ext/*.o
+**/*.bundle
+**/*.o
+tmp
