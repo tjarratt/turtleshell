@@ -1,8 +1,14 @@
 require 'bundler/setup'
 require 'rspec/core/rake_task'
+require 'rake/extensiontask'
 
+task :default => 'compile:librtlsdr'
 task :default => :spec
 task :spec    => 'spec:progress'
+
+Rake::ExtensionTask.new(:librtlsdr) do |ext|
+  ext.lib_dir = "lib/librtlsdr"
+end
 
 namespace :spec do
   desc 'Run all specs in spec directory (format=progress)'
