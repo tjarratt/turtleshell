@@ -9,7 +9,6 @@ class TurtleShell::Device
   end
 
   def rtlsdr_device
-    #TODO
   end
 
   # read specified number of complex samples from tuner
