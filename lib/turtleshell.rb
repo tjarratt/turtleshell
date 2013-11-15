@@ -10,4 +10,3 @@ end
 
 require 'librtlsdr/librtlsdr'
 require 'turtleshell/device'
-require 'turtleshell/sdr'

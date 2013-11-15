@@ -2,13 +2,11 @@ class TurtleShell::Device
   DEFAULT_ASYNC_BUFFER = 32
   DEFAULT_READ_SIZE = 1024
 
-  attr_accessor :sample_rate, :center_freq, :gain
+  attr_accessor :sample_rate, :center_freq, :gain, :name
 
   def initialize
-    @device = rtlsdr_device()
-  end
-
-  def rtlsdr_device
+    @device = TurtleShell::RTLSDR::first_device
+    @name = @device[:name]
   end
 
   # read specified number of complex samples from tuner
