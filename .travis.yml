@@ -2,4 +2,8 @@ language: ruby
 bundler_args: --without development
 rvm:
   - 2.0.0
+before_install:
+  "sudo apt-get install librtlsdr"
+before_script:
+  "rake compile:librtlsdr"
 script: "rake spec"
