@@ -3,7 +3,14 @@ bundler_args: --without development
 rvm:
   - 2.0.0
 before_install:
-  "sudo apt-get install librtlsdr"
+  - "git clone git://git.osmocom.org/rtl-sdr.git"
+  - "cd rtl-sdr"
+  - "autoreconf -i"
+  - "./configure"
+  - "make"
+  - "sudo make install"
+  - "sudo ldconfig"
 before_script:
-  "rake compile:librtlsdr"
-script: "rake spec"
+  - "rake compile:librtlsdr"
+script:
+  - "rake spec"
