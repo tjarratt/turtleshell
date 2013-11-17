@@ -13,6 +13,6 @@ before_install:
   - "sudo ldconfig"
 before_script:
   - "bundle install"
-  - "rake clobber; rake compile:librtlsdr"
+  - "bundle exec rake compile:librtlsdr"
 script:
   - "rake spec"
