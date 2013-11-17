@@ -18,7 +18,7 @@ static VALUE turtleshell_new_device() {
   // ensure we have at least one device
   if (!count) { return Qnil; }
 
-  device = rtlsdr_open(&device, 0);
+  rtlsdr_open(&device, 0);
   wrapped_device = Data_Wrap_Struct(c_device, NULL, NULL, device);
 
   hash = rb_hash_new();
