@@ -12,6 +12,7 @@ before_install:
   - "sudo make install"
   - "sudo ldconfig"
 before_script:
+  - "bundle install"
   - "rake compile:librtlsdr"
 script:
   - "rake spec"
