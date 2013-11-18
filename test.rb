@@ -4,7 +4,12 @@ $:.unshift lib unless $:.include? lib
 
 require 'turtleshell'
 
-sdr = TurtleShell::SDR.new
+begin
+  sdr = TurtleShell::Device.new
+rescue TurtleShell::DeviceNotFoundError
+  puts 'No compatible devices found. bailing!'
+  exit 1
+end
 
 puts 'Configuring SDR device'
 
