@@ -1,6 +1,6 @@
 require 'turtleshell'
 
-describe 'Turtleshell:Device interfaces' do
+describe 'TurtleShell:Device interfaces' do
   it 'should return the name' do
     TurtleShell::RTLSDR.
       should_receive(:first_device).

@@ -10,3 +10,13 @@ end
 
 require 'librtlsdr/librtlsdr'
 require 'turtleshell/device'
+
+module TurtleShell
+  def self.all_devices
+    TurtleShell::RTLSDR.all_devices
+  end
+
+  def self.count_of_devices
+    TurtleShell::RTLSDR.count
+  end
+end

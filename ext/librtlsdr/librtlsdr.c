@@ -28,10 +28,22 @@ static VALUE turtleshell_new_device() {
   return hash;
 }
 
+static VALUE turtleshell_all_devices() {
+  VALUE devices_array = rb_ary_new();
+  int count = rtlsdr_get_device_count();
+
+  for (int i = 0; i < count; ++i) {
+    rb_ary_push(devices_array, rb_str_new2(rtlsdr_get_device_name(i)));
+  }
+
+  return devices_array;
+}
+
 void Init_librtlsdr() {
   m_turtleshell = rb_define_module("TurtleShell");
   m_rtlsdr = rb_define_module_under(m_turtleshell, "RTLSDR");
   c_device = rb_define_class_under(m_rtlsdr, "Device", rb_cObject);
   rb_define_module_function(m_rtlsdr, "count", turtleshell_count, 0);
   rb_define_module_function(m_rtlsdr, "first_device", turtleshell_new_device, 0);
+  rb_define_module_function(m_rtlsdr, "all_devices", turtleshell_all_devices, 0);
 }
