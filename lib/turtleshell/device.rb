@@ -6,16 +6,53 @@ module TurtleShell
     DEFAULT_ASYNC_BUFFER = 32
     DEFAULT_READ_SIZE = 1024
 
-    attr_accessor :sample_rate, :center_freq, :gain, :name
+    # initializers
+    def initialize(n)
+      raise ArgumentError.new('TurtleShell::Device.new expects a number') unless n.is_a? Fixnum
 
-    def initialize
-      unless @device = TurtleShell::RTLSDR::first_device
+      unless @device = TurtleShell::RTLSDR::nth_device(n)
         raise TurtleShell::DeviceNotFoundError
       end
     end
 
+    def self.nth_device(n)
+      count = TurtleShell.count_of_devices
+      unless n < count
+        raise ArgumentError.new('Index out of bounds')
+      end
+
+      new(n)
+    end
+
+    def self.device_with_name(name)
+      unless index = TurtleShell.all_devices.index(name)
+        raise ArgumentError.new('No device with that name')
+      end
+
+      new(index)
+    end
+
+    # attributes
     def name
       @device ? @device[:name] : 'No device found'
+    end
+
+    def sample_rate(rate=nil)
+      return @device.sample_rate if rate.nil?
+
+      @device.set_sample_rate(rate)
+    end
+
+    def center_frequency(freq)
+      return @device.center_frequency if freq.nil?
+
+      @device.set_center_frequency(freq)
+    end
+
+    def gain(value)
+      return @device.gain if value.nil?
+
+      @device.set_gain(value)
     end
 
     # read specified number of complex samples from tuner
