@@ -10,7 +10,7 @@ TurtleShell.all_devices.each_with_index do |device_name, index|
 end
 
 begin
-  sdr = TurtleShell::Device.new
+  sdr = TurtleShell::Device.new(0)
 rescue TurtleShell::DeviceNotFoundError
   puts 'No compatible devices found. bailing!'
   exit 1
