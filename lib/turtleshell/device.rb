@@ -37,22 +37,22 @@ module TurtleShell
       @device ? @device[:name] : 'No device found'
     end
 
-    def sample_rate(rate=nil)
-      return @device.sample_rate if rate.nil?
+    def sample_rate(rate = nil)
+      return @device[:sample_rate] if rate.nil?
 
-      @device.set_sample_rate(rate)
+      @device[:sample_rate] = rate
     end
 
-    def center_frequency(freq)
-      return @device.center_frequency if freq.nil?
+    def center_frequency(freq = nil)
+      return @device[:center_frequency] if freq.nil?
 
-      @device.set_center_frequency(freq)
+      @device[:center_frequency] = freq
     end
 
-    def gain(value)
-      return @device.gain if value.nil?
+    def gain(value = nil)
+      return @device[:gain] if value.nil?
 
-      @device.set_gain(value)
+      @device[:gain] = value
     end
 
     # read specified number of complex samples from tuner

@@ -75,3 +75,46 @@ describe 'creating devices' do
     end
   end
 end
+
+describe 'device attribues' do
+  before do
+    TurtleShell::RTLSDR.
+      should_receive(:nth_device).
+      with(0).
+      and_return({
+        :name => 'self-applying-cat-silver',
+        :sample_rate => 666,
+        :center_frequency => 70e6,
+        :gain => :auto,
+      })
+
+    @device = TurtleShell::Device.new(0)
+  end
+
+  describe 'setting the sample rate' do
+    it 'gets and sets the value' do
+      expect(@device.sample_rate).to eq(666)
+
+      @device.sample_rate(12)
+      expect(@device.sample_rate).to eq(12)
+    end
+  end
+
+  describe 'setting the center frequency' do
+    it 'is not implemented yet' do
+      expect(@device.center_frequency).to eq(70e6)
+
+      @device.center_frequency(12e12)
+      expect(@device.center_frequency).to eq(12e12)
+    end
+  end
+
+  describe 'setting the gain' do
+    it 'is not implemented yet' do
+      expect(@device.gain).to eq(:auto)
+
+      @device.gain(4)
+      expect(@device.gain).to eq(4)
+    end
+  end
+end
