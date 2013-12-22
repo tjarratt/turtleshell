@@ -12,12 +12,6 @@ end
 
 describe 'creating devices' do
   describe 'finding a device by index' do
-    before do
-      TurtleShell.
-        should_receive(:count_of_devices).
-        and_return(751)
-    end
-
     it 'should create a new device' do
       TurtleShell::RTLSDR.
         should_receive(:nth_device).
@@ -25,11 +19,6 @@ describe 'creating devices' do
         and_return({:name => 'ill-sorted-limbic-system'})
 
       expect(TurtleShell::Device.nth_device(750)).to be_an_instance_of TurtleShell::Device
-    end
-
-    it 'should raise an ArgumentError when the index is out of bounds' do
-      expect { TurtleShell::Device.nth_device(751) }.
-        to raise_error(ArgumentError, 'Index out of bounds')
     end
   end
 
@@ -95,7 +84,7 @@ describe 'device attribues' do
     it 'gets and sets the value' do
       expect(@device.sample_rate).to eq(666)
 
-      @device.sample_rate(12)
+      @device.sample_rate = 12
       expect(@device.sample_rate).to eq(12)
     end
   end
@@ -104,7 +93,7 @@ describe 'device attribues' do
     it 'is not implemented yet' do
       expect(@device.center_frequency).to eq(70e6)
 
-      @device.center_frequency(12e12)
+      @device.center_frequency = 12e12
       expect(@device.center_frequency).to eq(12e12)
     end
   end
@@ -113,7 +102,7 @@ describe 'device attribues' do
     it 'is not implemented yet' do
       expect(@device.gain).to eq(:auto)
 
-      @device.gain(4)
+      @device.gain = 4
       expect(@device.gain).to eq(4)
     end
   end
