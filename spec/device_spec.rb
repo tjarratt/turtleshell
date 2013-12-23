@@ -65,45 +65,120 @@ describe 'creating devices' do
   end
 end
 
+def create_mock_device
+  TurtleShell::RTLSDR.
+    should_receive(:nth_device).
+    with(0).
+    and_return({
+      :name => 'self-applying-cat-silver',
+      :sample_rate => 666,
+      :center_frequency => 70e6,
+      :gain => :auto,
+    })
+
+  TurtleShell::Device.new(0)
+end
+
 describe 'device attribues' do
-  before do
-    TurtleShell::RTLSDR.
-      should_receive(:nth_device).
-      with(0).
-      and_return({
-        :name => 'self-applying-cat-silver',
-        :sample_rate => 666,
-        :center_frequency => 70e6,
-        :gain => :auto,
-      })
+  describe 'getting and setting the sample rate' do
+    describe 'getting the value' do
+      before do
+        @device = create_mock_device
+        TurtleShell::RTLSDR.
+          should_receive(:get_sample_rate).
+          and_return(666)
+      end
 
-    @device = TurtleShell::Device.new(0)
-  end
+      it 'gets the value' do
+        expect(@device.sample_rate).to eq(666)
+      end
+    end
 
-  describe 'setting the sample rate' do
-    it 'gets and sets the value' do
-      expect(@device.sample_rate).to eq(666)
+    describe 'setting the value' do
+      before do
+        @device = create_mock_device
+        TurtleShell::RTLSDR.
+          should_receive(:set_sample_rate)
+          .with(nil, 12) ### mocked out device struct
 
-      @device.sample_rate = 12
-      expect(@device.sample_rate).to eq(12)
+        TurtleShell::RTLSDR.
+          should_receive(:get_sample_rate)
+          .and_return(12)
+      end
+
+      it 'sets the value' do
+        @device.sample_rate = 12
+        expect(@device.sample_rate).to eq(12)
+      end
     end
   end
 
-  describe 'setting the center frequency' do
-    it 'is not implemented yet' do
-      expect(@device.center_frequency).to eq(70e6)
+  describe 'getting and setting the center frequency' do
+    describe 'getting the value' do
+      before do
+        @device = create_mock_device
 
-      @device.center_frequency = 12e12
-      expect(@device.center_frequency).to eq(12e12)
+        TurtleShell::RTLSDR.
+          should_receive(:get_center_freq)
+          .and_return(70e6)
+
+        it 'gets the value' do
+          expect(@device.center_frequency).to eq(70e6)
+        end
+      end
+    end
+
+    describe 'setting the value' do
+      before do
+        @device = create_mock_device
+
+        TurtleShell::RTLSDR.
+          should_receive(:set_center_freq).
+          with(nil, 12e12)
+
+        TurtleShell::RTLSDR.
+          should_receive(:get_center_freq).
+          and_return(12e12)
+      end
+
+      it 'sets the value' do
+        @device.center_frequency = 12e12
+        expect(@device.center_frequency).to eq(12e12)
+      end
     end
   end
 
-  describe 'setting the gain' do
-    it 'is not implemented yet' do
-      expect(@device.gain).to eq(:auto)
+  describe 'getting and setting the gain' do
+    describe 'getting the value' do
+      before do
+        @device = create_mock_device
+        TurtleShell::RTLSDR.
+          should_receive(:get_gain).
+          and_return(:auto)
+      end
 
-      @device.gain = 4
-      expect(@device.gain).to eq(4)
+      it 'gets the gain' do
+        expect(@device.gain).to eq(:auto)
+      end
+    end
+
+    describe 'setting the value' do
+      before do
+        @device = create_mock_device
+
+        TurtleShell::RTLSDR.
+          should_receive(:set_gain).
+          with(nil, 4) # xxx mocked out device
+
+        TurtleShell::RTLSDR.
+          should_receive(:get_gain).
+          and_return(4)
+      end
+
+      it 'sets the value' do
+        @device.gain = 4
+        expect(@device.gain).to eq(4)
+      end
     end
   end
 end

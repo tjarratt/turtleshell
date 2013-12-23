@@ -7,19 +7,16 @@ module TurtleShell
     DEFAULT_READ_SIZE = 1024
 
     attr_reader :name
-    attr_accessor :sample_rate, :center_frequency, :gain
 
     def initialize(n)
       raise ArgumentError.new('TurtleShell::Device.new expects a number') unless n.is_a? Fixnum
 
-      unless @device = TurtleShell::RTLSDR.nth_device(n)
+      unless raw_device_attrs = TurtleShell::RTLSDR.nth_device(n)
         raise TurtleShell::DeviceNotFoundError
       end
 
-      @name = @device[:name]
-      @sample_rate = @device[:sample_rate]
-      @center_frequency = @device[:center_frequency]
-      @gain = @device[:gain]
+      @name = raw_device_attrs[:name]
+      @device = raw_device_attrs[:device]
     end
 
     def self.nth_device(n)
@@ -32,6 +29,30 @@ module TurtleShell
       end
 
       new(index)
+    end
+
+    def sample_rate
+      TurtleShell::RTLSDR.get_sample_rate(@device)
+    end
+
+    def sample_rate=(rate)
+      TurtleShell::RTLSDR.set_sample_rate(@device, rate)
+    end
+
+    def center_frequency
+      TurtleShell::RTLSDR.get_center_freq(@device)
+    end
+
+    def center_frequency=(freq)
+      TurtleShell::RTLSDR.set_center_freq(@device, freq)
+    end
+
+    def gain
+      TurtleShell::RTLSDR.get_gain(@device)
+    end
+
+    def gain=(gain)
+      TurtleShell::RTLSDR.set_gain(@device, gain)
     end
 
     # read specified number of complex samples from tuner
