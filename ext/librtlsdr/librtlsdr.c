@@ -67,13 +67,15 @@ static VALUE turtleshell_read_synchronous(VALUE self,
 }
 
 typedef void *(turtleshell_callback)(void *);
-static void turtleshell_read_asynchronous(VALUE self,
+static VALUE turtleshell_read_asynchronous(VALUE self,
                                           VALUE device,
                                           VALUE buffer,
                                           VALUE bytes_to_read,
                                           VALUE bytes_read_return_value,
                                           turtleshell_callback callback) {
   /* rtlsdr_read_async(); */
+
+  return Qnil;
 }
 
 static VALUE turtleshell_get_sample_rate(VALUE self, VALUE wrapped_device) {
@@ -82,13 +84,15 @@ static VALUE turtleshell_get_sample_rate(VALUE self, VALUE wrapped_device) {
   return UINT2NUM(rtlsdr_get_sample_rate(device));
 }
 
-static void turtleshell_set_sample_rate(VALUE self,
+static VALUE turtleshell_set_sample_rate(VALUE self,
                                         VALUE wrapped_device,
                                         VALUE value) {
   uint32_t rate = NUM2UINT(value);
   rtlsdr_dev_t *device;
   Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
   rtlsdr_set_sample_rate(device, rate);
+
+  return Qnil;
 }
 
 static VALUE turtleshell_get_center_frequency(VALUE self, VALUE wrapped_device) {
@@ -97,13 +101,14 @@ static VALUE turtleshell_get_center_frequency(VALUE self, VALUE wrapped_device) 
   return UINT2NUM(rtlsdr_get_center_freq(device));
 }
 
-static void turtleshell_set_center_frequency(VALUE self,
+static VALUE turtleshell_set_center_frequency(VALUE self,
                                              VALUE wrapped_device,
                                              VALUE value) {
   uint32_t freq = NUM2UINT(value);
   rtlsdr_dev_t *device;
   Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
   rtlsdr_set_center_freq(device, freq);
+  return Qnil;
 }
 
 static VALUE turtleshell_get_gain(VALUE self, VALUE wrapped_device) {
@@ -112,11 +117,12 @@ static VALUE turtleshell_get_gain(VALUE self, VALUE wrapped_device) {
   return INT2NUM(rtlsdr_get_tuner_gain(device));
 }
 
-static void turtleshell_set_gain(VALUE self, VALUE wrapped_device, VALUE value) {
+static VALUE turtleshell_set_gain(VALUE self, VALUE wrapped_device, VALUE value) {
   int gain = NUM2INT(value);
   rtlsdr_dev_t *device;
   Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
   rtlsdr_set_tuner_gain(device, gain);
+  return Qnil;
 }
 
 void Init_librtlsdr() {
@@ -142,5 +148,5 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "get_center_freq", turtleshell_get_center_frequency, 1);
   rb_define_module_function(m_rtlsdr, "set_center_freq", turtleshell_set_center_frequency, 2);
   rb_define_module_function(m_rtlsdr, "get_gain", turtleshell_get_gain, 1);
-  rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 2);
+  rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 3);
 }
