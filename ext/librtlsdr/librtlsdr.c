@@ -29,10 +29,11 @@ static VALUE turtleshell_first_device() {
 }
 
 static VALUE turtleshell_all_devices() {
+  int i, count;
   VALUE devices_array = rb_ary_new();
-  int count = rtlsdr_get_device_count();
+  count = rtlsdr_get_device_count();
 
-  for (int i = 0; i < count; ++i) {
+  for (i = 0; i < count; ++i) {
     rb_ary_push(devices_array, rb_str_new2(rtlsdr_get_device_name(i)));
   }
 
