@@ -19,5 +19,5 @@ PLATFORMS
 
 DEPENDENCIES
   rake
-  rake-compiler
+  rake-compiler (~> 0.6)
   rspec
