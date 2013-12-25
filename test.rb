@@ -16,13 +16,12 @@ rescue TurtleShell::DeviceNotFoundError
   exit 1
 end
 
-puts 'Configuring SDR device'
+puts "\n\nConfiguring SDR device\n"
 
 sdr.sample_rate = 2.4e6
 sdr.center_frequency = 100e6
 sdr.gain = 10
 
-puts "\n\n"
 puts "\t sample rate:       #{sdr.sample_rate} MHz"
 puts "\t center frequency:  #{sdr.center_frequency} MHz"
 puts "\t gain:              #{sdr.gain} dB"
