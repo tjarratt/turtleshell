@@ -2,3 +2,4 @@
 **/*.bundle
 **/*.o
 tmp
+Gemfile.lock
