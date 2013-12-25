@@ -41,30 +41,55 @@ static VALUE turtleshell_all_devices() {
 }
 
 static VALUE turtleshell_nth_device(VALUE self, VALUE n) {
+  int open_success;
   uint32_t int_n = NUM2UINT(n);
   rtlsdr_dev_t *device = NULL;
-  VALUE hash, wrapped_device;
+  VALUE wrapped_device, hash = rb_hash_new();
   uint32_t device_count = (uint32_t)rtlsdr_get_device_count();
 
   if (int_n >= device_count) { return Qnil; }
 
-  rtlsdr_open(&device, int_n);
+  open_success = rtlsdr_open(&device, int_n);
+  if (open_success != 0) {
+    return Qnil;
+  }
+
   wrapped_device = Data_Wrap_Struct(c_device, NULL, NULL, device);
 
-  hash = rb_hash_new();
-  rb_hash_aset(hash, rb_str_new2("name"), rb_str_new2(rtlsdr_get_device_name(0)));
-  rb_hash_aset(hash, rb_str_new2("device_handle"), wrapped_device);
+  rb_hash_aset(hash, ID2SYM(rb_intern("name")), rb_str_new2(rtlsdr_get_device_name(0)));
+  rb_hash_aset(hash, ID2SYM(rb_intern("device")), wrapped_device);
 
   return hash;
+}
+
+static VALUE turtleshell_close(VALUE self, VALUE device) {
+  rtlsdr_dev_t *dev = NULL;
+  Data_Get_Struct(device, rtlsdr_dev_t, dev);
+  rtlsdr_close(dev);
+  return Qnil;
 }
 
 static VALUE turtleshell_read_synchronous(VALUE self,
                                           VALUE device,
                                           VALUE buffer,
-                                          VALUE bytes_to_read,
-                                          VALUE bytes_read_return_value) {
-  /* rtlsdr_read_sync(); */
-  return Qnil;
+                                          VALUE bytes_to_read) {
+  int success, i;
+  int bytes_read;
+  int length = NUM2INT(bytes_to_read);
+  uint8_t *p_buffer = malloc(sizeof(uint8_t) * bytes_to_read);
+  rtlsdr_dev_t *p_device;
+
+  Data_Get_Struct(device, rtlsdr_dev_t, p_device);
+
+  rtlsdr_reset_buffer(p_device);
+  success = rtlsdr_read_sync(p_device, p_buffer, length, &bytes_read);
+
+  buffer = rb_ary_new();
+  for (i = 0; i < bytes_read; ++i) {
+    rb_ary_push(buffer, UINT2NUM(p_buffer[i]));
+  }
+
+  return INT2NUM(success);
 }
 
 typedef void *(turtleshell_callback)(void *);
@@ -134,13 +159,14 @@ void Init_librtlsdr() {
   // count of devices
   rb_define_module_function(m_rtlsdr, "count", turtleshell_count, 0);
 
-  // getting references to new devices
+  // life cycle of devices
   rb_define_module_function(m_rtlsdr, "first_device", turtleshell_first_device, 0);
   rb_define_module_function(m_rtlsdr, "all_devices", turtleshell_all_devices, 0);
   rb_define_module_function(m_rtlsdr, "nth_device", turtleshell_nth_device, 1);
+  rb_define_module_function(m_rtlsdr, "close_device", turtleshell_close, 1);
 
   // reading bytes
-  rb_define_module_function(m_rtlsdr, "read_sync", turtleshell_read_synchronous, 4);
+  rb_define_module_function(m_rtlsdr, "read_sync", turtleshell_read_synchronous, 3);
   rb_define_module_function(m_rtlsdr, "read_async", turtleshell_read_asynchronous, 5);
 
   // getters and setters
@@ -149,5 +175,5 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "get_center_freq", turtleshell_get_center_frequency, 1);
   rb_define_module_function(m_rtlsdr, "set_center_freq", turtleshell_set_center_frequency, 2);
   rb_define_module_function(m_rtlsdr, "get_gain", turtleshell_get_gain, 1);
-  rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 3);
+  rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 2);
 }

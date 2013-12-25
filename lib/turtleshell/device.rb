@@ -60,21 +60,27 @@ module TurtleShell
     def read_samples(number_of_samples = RtlSDR::DEFAULT_READ_SIZE)
       number_of_bytes = 2 * number_of_samples
       raw_data = read_bytes(number_of_bytes)
-      self.packed_bytes_to_complex(raw_data)
+      packed_bytes_to_complex(raw_data)
+    end
+
+    def close_device
+      unless @device.nil?
+        TurtleShell::RTLSDR.close_device(@device)
+      end
     end
 
     private
-    def read_bytes(number_of_bytes)
-      @buffer = Array.new(number_of_bytes)
-      @bytes_read = 0
+    def read_bytes(bytes_to_read = 2048)
+      @buffer = Array.new(bytes_to_read)
 
-      result = TurtleShell::RTLSDR.read_sync(@device, @buffer, number_of_bytes, @bytes_read)
+      result = TurtleShell::RTLSDR.read_sync(@device, @buffer, bytes_to_read)
+      puts "read #{@buffer.size} bytes"
 
       if result != 0
-        raise IOError.new("Error code #{result} reading #{number_of_bytes} bytes")
-      elsif @bytes_read < number_of_bytes
-        self.close()
-        raise IOError.new("Short read, only read #{@bytes_read} of requested #{number_of_bytes} bytes")
+        self.close_device
+        raise IOError.new("Error code #{result} reading #{bytes_to_read} bytes")
+      elsif @buffer.size != bytes_to_read
+        raise IOError.new("Error reading from device. Requested #{bytes_to_read} but got #{buffer.size} back")
       end
 
       @buffer
