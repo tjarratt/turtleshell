@@ -44,8 +44,9 @@ static VALUE turtleshell_nth_device(VALUE self, VALUE n) {
   uint32_t int_n = NUM2UINT(n);
   rtlsdr_dev_t *device = NULL;
   VALUE hash, wrapped_device;
+  uint32_t device_count = (uint32_t)rtlsdr_get_device_count();
 
-  if (n < rtlsdr_get_device_count()) { return Qnil; }
+  if (int_n >= device_count) { return Qnil; }
 
   rtlsdr_open(&device, int_n);
   wrapped_device = Data_Wrap_Struct(c_device, NULL, NULL, device);
