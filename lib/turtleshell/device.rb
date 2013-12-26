@@ -70,27 +70,22 @@ module TurtleShell
     end
 
     private
-    def read_bytes(bytes_to_read = 2048)
-      @buffer = Array.new(bytes_to_read)
+    def read_bytes(bytes_to_read)
+      buffer = TurtleShell::RTLSDR.read_sync(@device, bytes_to_read)
 
-      result = TurtleShell::RTLSDR.read_sync(@device, @buffer, bytes_to_read)
-      puts "read #{@buffer.size} bytes"
-
-      if result != 0
-        self.close_device
-        raise IOError.new("Error code #{result} reading #{bytes_to_read} bytes")
-      elsif @buffer.size != bytes_to_read
+      if buffer.size != bytes_to_read
+        close_device
         raise IOError.new("Error reading from device. Requested #{bytes_to_read} but got #{buffer.size} back")
       end
 
-      @buffer
+      buffer
     end
 
     # converts an array of bytes to a list of complex numbers
     # and normalizes them within the range [-1, 1]
     def packed_bytes_to_complex(bytes)
-      bytes.each_slice(2).map! do |i, r|
-        Complex(i / 127.5 - 1, q / 127.5 - 1)
+      bytes.each_slice(2).map do |i, r|
+        Complex(i / 127.5 - 1, r / 127.5 - 1)
       end
     end
   end

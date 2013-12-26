@@ -71,10 +71,10 @@ static VALUE turtleshell_close(VALUE self, VALUE device) {
 
 static VALUE turtleshell_read_synchronous(VALUE self,
                                           VALUE device,
-                                          VALUE buffer,
                                           VALUE bytes_to_read) {
   int success, i;
   int bytes_read;
+  VALUE buffer = rb_ary_new();
   int length = NUM2INT(bytes_to_read);
   uint8_t *p_buffer = malloc(sizeof(uint8_t) * bytes_to_read);
   rtlsdr_dev_t *p_device;
@@ -83,13 +83,16 @@ static VALUE turtleshell_read_synchronous(VALUE self,
 
   rtlsdr_reset_buffer(p_device);
   success = rtlsdr_read_sync(p_device, p_buffer, length, &bytes_read);
-
-  buffer = rb_ary_new();
-  for (i = 0; i < bytes_read; ++i) {
-    rb_ary_push(buffer, UINT2NUM(p_buffer[i]));
+  if (success != 0) {
+    printf("error reading bytes. read_sync returned %d\n", success);
+    return buffer;
   }
 
-  return INT2NUM(success);
+  for (i = 0; i < bytes_read; ++i) {
+    rb_ary_push(buffer, UINT2NUM((uint8_t)p_buffer[i]));
+  }
+
+  return buffer;
 }
 
 typedef void *(turtleshell_callback)(void *);
@@ -166,7 +169,7 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "close_device", turtleshell_close, 1);
 
   // reading bytes
-  rb_define_module_function(m_rtlsdr, "read_sync", turtleshell_read_synchronous, 3);
+  rb_define_module_function(m_rtlsdr, "read_sync", turtleshell_read_synchronous, 2);
   rb_define_module_function(m_rtlsdr, "read_async", turtleshell_read_asynchronous, 5);
 
   // getters and setters
