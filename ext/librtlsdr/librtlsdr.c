@@ -85,6 +85,7 @@ static VALUE turtleshell_read_synchronous(VALUE self,
   success = rtlsdr_read_sync(p_device, p_buffer, length, &bytes_read);
   if (success != 0) {
     printf("error reading bytes. read_sync returned %d\n", success);
+    free(p_buffer);
     return buffer;
   }
 
@@ -92,17 +93,67 @@ static VALUE turtleshell_read_synchronous(VALUE self,
     rb_ary_push(buffer, UINT2NUM((uint8_t)p_buffer[i]));
   }
 
+  free(p_buffer);
   return buffer;
 }
 
-typedef void *(turtleshell_callback)(void *);
+struct turtleshell_context {
+  VALUE callback;
+  rtlsdr_dev_t *device;
+};
+
+typedef struct turtleshell_context turtleshell_context;
+
+static void turtleshell_callback(unsigned char *buffer, uint32_t length, void *context) {
+  uint32_t i;
+  rtlsdr_dev_t *device;
+  VALUE buffer_array, callback, bool_value;
+  struct turtleshell_context unwrapped_context;
+
+  unwrapped_context = *(struct turtleshell_context *)context;
+
+  if (!unwrapped_context.callback || !unwrapped_context.device) {
+    printf("unexpected error: could not read callback / device from unwrapped context\n");
+    exit(1);
+  }
+
+  device = unwrapped_context.device;
+  callback = unwrapped_context.callback;
+
+  buffer_array = rb_ary_new();
+  for (i = 0; i < length; ++i) {
+    rb_ary_push(buffer_array, UINT2NUM((uint8_t)buffer[i]));
+  }
+
+  // TODO: do we need to free(buffer) or context ?
+  bool_value = RTEST(rb_funcall(callback, rb_intern("call"), 1, buffer_array));
+
+  if (!bool_value) {
+    rtlsdr_cancel_async(device);
+  }
+}
+
 static VALUE turtleshell_read_asynchronous(VALUE self,
                                           VALUE device,
-                                          VALUE buffer,
                                           VALUE bytes_to_read,
-                                          VALUE bytes_read_return_value,
-                                          turtleshell_callback callback) {
-  /* rtlsdr_read_async(); */
+                                          VALUE callback) {
+  int success, length = NUM2INT(bytes_to_read);
+  rtlsdr_dev_t *p_device;
+  struct turtleshell_context context;
+  void *wrapped_context;
+
+  Data_Get_Struct(device, rtlsdr_dev_t, p_device);
+
+  context.device = p_device;
+  context.callback = callback;
+  wrapped_context = (void *)&context;
+
+  rtlsdr_reset_buffer(p_device);
+  success = rtlsdr_read_async(p_device, turtleshell_callback, wrapped_context, 0, length);
+
+  if (success != 0) {
+    printf("error reading async: return code %d\n", success);
+  }
 
   return Qnil;
 }
@@ -170,7 +221,7 @@ void Init_librtlsdr() {
 
   // reading bytes
   rb_define_module_function(m_rtlsdr, "read_sync", turtleshell_read_synchronous, 2);
-  rb_define_module_function(m_rtlsdr, "read_async", turtleshell_read_asynchronous, 5);
+  rb_define_module_function(m_rtlsdr, "read_async", turtleshell_read_asynchronous, 3);
 
   // getters and setters
   rb_define_module_function(m_rtlsdr, "get_sample_rate", turtleshell_get_sample_rate, 1);

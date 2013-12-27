@@ -3,9 +3,6 @@ module TurtleShell
   class DeviceNotFoundError < Exception; end
 
   class Device
-    DEFAULT_ASYNC_BUFFER = 32
-    DEFAULT_READ_SIZE = 1024
-
     attr_reader :name
 
     def initialize(n)
@@ -57,10 +54,29 @@ module TurtleShell
 
     # read specified number of complex samples from tuner
     # real and imaginary parts are normalized between [-1, 1]
-    def read_samples(number_of_samples = RtlSDR::DEFAULT_READ_SIZE)
+    def read_samples(number_of_samples = 1024)
       number_of_bytes = 2 * number_of_samples
       raw_data = read_bytes(number_of_bytes)
       packed_bytes_to_complex(raw_data)
+    end
+
+    # read specified number of complex samples from tuner into a block
+    # real and imaginary parts are normalized between [-1, 1]
+    def read_samples_async(number_of_samples = 1024, &block)
+      block = proc { } unless block_given?
+      wrapped_block = proc do |raw_data|
+        block.call(packed_bytes_to_complex(raw_data))
+      end
+
+      number_of_bytes_to_read = 2 * number_of_samples
+
+      begin
+          TurtleShell::RTLSDR.read_async(@device, number_of_bytes_to_read, wrapped_block)
+      rescue SignalException => e
+        puts 'Caught signal, cancelling async callback.'
+        TurtleShell::RTLSDR.end_async(@device)
+        raise e
+      end
     end
 
     def close_device
