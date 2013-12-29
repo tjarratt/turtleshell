@@ -3,7 +3,7 @@
 
 Overview
 --------
-Turtleshell is a ruby interface for librtlsdr, a C library for interfacing with Realtek RTL2832 DVB USB devices. More information about librtlsdr can be found [on their website](http://sdr.osmocom.org/trac/wiki/rtl-sdr).
+Turtleshell is a ruby wrapper around librtlsdr, a C library for interfacing with Realtek RTL2832 DVB USB devices. More information about librtlsdr can be found [on their website](http://sdr.osmocom.org/trac/wiki/rtl-sdr).
 
 Usage
 -----
