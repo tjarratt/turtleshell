@@ -1,13 +1,8 @@
 #!/usr/bin/env ruby
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('../../lib', __FILE__)
 $:.unshift lib unless $:.include? lib
 
 require 'turtleshell'
-
-puts "Found #{TurtleShell.count_of_devices} devices connected"
-TurtleShell.all_devices.each_with_index do |device_name, index|
-  puts "#{index} : #{device_name}"
-end
 
 begin
   sdr = TurtleShell::Device.new
@@ -30,15 +25,5 @@ puts "\n\n"
 puts "Reading Samples..."
 samples = sdr.read_samples(1024)
 print "\t signal mean:   #{samples.inject(:+)/samples.length}"
-
-count = 0
-puts "\n\nTesting async callbacks..."
-sdr.read_samples_async(512) do |buffer|
-  count += 1
-  puts "\t in async callback with buffer of length #{buffer.length}"
-  puts "\t signal mean:   #{buffer.inject(:+)/buffer.length}"
-
-  count == 3 # exit when this has been called three times
-end
 
 sdr.close_device
