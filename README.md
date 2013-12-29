@@ -28,6 +28,8 @@ samples = sdr.read_samples(1024)
 puts "signal mean:   #{samples.inject(:+)/samples.length}"
 ```
 
+More examples are available in the (examples directory)[https://github.com/tjarratt/turtleshell/tree/master/examples].
+
 Dependencies
 ------------
 * ruby (version 1.9.2 or later)
