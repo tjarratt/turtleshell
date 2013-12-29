@@ -24,7 +24,7 @@ sdr.center_frequency = 100e6
 sdr.gain = 10
 
 # read samples from the device
-samples = sdr.read_samples(1024)
+samples = sdr.read_samples
 puts "signal mean:   #{samples.inject(:+)/samples.length}"
 ```
 

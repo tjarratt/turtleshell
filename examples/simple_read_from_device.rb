@@ -33,7 +33,7 @@ print "\t signal mean:   #{samples.inject(:+)/samples.length}"
 
 count = 0
 puts "\n\nTesting async callbacks..."
-sdr.read_samples_async do |buffer|
+sdr.read_samples_async(512) do |buffer|
   count += 1
   puts "\t in async callback with buffer of length #{buffer.length}"
   puts "\t signal mean:   #{buffer.inject(:+)/buffer.length}"
