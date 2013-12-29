@@ -114,7 +114,7 @@ static void turtleshell_callback(unsigned char *buffer, uint32_t length, void *c
 
   if (!unwrapped_context.callback || !unwrapped_context.device) {
     printf("unexpected error: could not read callback / device from unwrapped context\n");
-    exit(1);
+    return;
   }
 
   device = unwrapped_context.device;
@@ -205,6 +205,25 @@ static VALUE turtleshell_set_gain(VALUE self, VALUE wrapped_device, VALUE value)
   return Qnil;
 }
 
+static VALUE turtleshell_get_gains(VALUE self, VALUE wrapped_device) {
+  int *gains = NULL;
+  int length, i;
+  rtlsdr_dev_t *device;
+  VALUE buffer = rb_ary_new();
+  Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
+
+  length = rtlsdr_get_tuner_gains(device, NULL);
+  gains = malloc(sizeof(int) * length);
+  rtlsdr_get_tuner_gains(device, gains);
+
+  for (i = 0; i < length; ++i) {
+    rb_ary_push(buffer, INT2NUM(gains[i]));
+  }
+
+  free(gains);
+  return buffer;
+}
+
 void Init_librtlsdr() {
   m_turtleshell = rb_define_module("TurtleShell");
   m_rtlsdr = rb_define_module_under(m_turtleshell, "RTLSDR");
@@ -230,4 +249,5 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "set_center_freq", turtleshell_set_center_frequency, 2);
   rb_define_module_function(m_rtlsdr, "get_gain", turtleshell_get_gain, 1);
   rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 2);
+  rb_define_module_function(m_rtlsdr, "get_tuner_gains", turtleshell_get_gains, 1);
 }

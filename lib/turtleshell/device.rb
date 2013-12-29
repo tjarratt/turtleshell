@@ -48,6 +48,11 @@ module TurtleShell
       TurtleShell::RTLSDR.set_gain(@device, gain)
     end
 
+    # most devices only support a finite number of gain values
+    def get_available_gains
+      TurtleShell::RTLSDR.get_tuner_gains(@device)
+    end
+
     # read specified number of complex samples from tuner
     # real and imaginary parts are normalized between [-1, 1]
     def read_samples(number_of_samples = 1024)
