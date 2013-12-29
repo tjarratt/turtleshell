@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'turtleshell'
-  s.version = '1.0.3'
+  s.version = '1.0.4'
   s.date = '2013-11-05'
   s.summary = 'A ruby wrapper for librtlsdr'
   s.description = 'turtleshell is an interface for realtek USB software defined radio devices'
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.require_path = 'lib'
 
-  s.extensions = %w[ext/librtlsdr/extconf.rb]
+  s.extensions = ['ext/librtlsdr/extconf.rb']
 
   s.add_dependency 'rake',              '~> 10.1'
   s.add_dependency 'rake-compiler',     '~> 0.9'
