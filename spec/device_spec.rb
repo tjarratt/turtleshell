@@ -6,7 +6,7 @@ describe 'TurtleShell:Device behavior' do
       should_receive(:nth_device).
       and_return({:name => 'slippery-slope'})
 
-    expect(TurtleShell::Device.new(0).name).to eq('slippery-slope')
+    expect(TurtleShell::Device.new.name).to eq('slippery-slope')
   end
 end
 
@@ -18,7 +18,7 @@ describe 'creating devices' do
         with(750).
         and_return({:name => 'ill-sorted-limbic-system'})
 
-      expect(TurtleShell::Device.nth_device(750)).to be_an_instance_of TurtleShell::Device
+      expect(TurtleShell::Device.new(750)).to be_an_instance_of TurtleShell::Device
     end
   end
 

@@ -5,7 +5,7 @@ module TurtleShell
   class Device
     attr_reader :name
 
-    def initialize(n)
+    def initialize(n = 0)
       raise ArgumentError.new('TurtleShell::Device.new expects a number') unless n.is_a? Fixnum
 
       unless raw_device_attrs = TurtleShell::RTLSDR.nth_device(n)
@@ -14,10 +14,6 @@ module TurtleShell
 
       @name = raw_device_attrs[:name]
       @device = raw_device_attrs[:device]
-    end
-
-    def self.nth_device(n)
-      new(n)
     end
 
     def self.device_with_name(name)
