@@ -53,6 +53,10 @@ module TurtleShell
       TurtleShell::RTLSDR.get_tuner_gains(@device)
     end
 
+    def get_tuner_type
+      TurtleShell::RTLSDR.get_tuner_type(@device)
+    end
+
     # read specified number of complex samples from tuner
     # real and imaginary parts are normalized between [-1, 1]
     def read_samples(number_of_samples = 1024)

@@ -224,6 +224,12 @@ static VALUE turtleshell_get_gains(VALUE self, VALUE wrapped_device) {
   return buffer;
 }
 
+static VALUE turtleshell_get_tuner_type(VALUE self, VALUE wrapped_device) {
+  rtlsdr_dev_t *device;
+  Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
+  return INT2NUM(rtlsdr_get_tuner_type(device));
+}
+
 void Init_librtlsdr() {
   m_turtleshell = rb_define_module("TurtleShell");
   m_rtlsdr = rb_define_module_under(m_turtleshell, "RTLSDR");
@@ -250,4 +256,5 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "get_gain", turtleshell_get_gain, 1);
   rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 2);
   rb_define_module_function(m_rtlsdr, "get_tuner_gains", turtleshell_get_gains, 1);
+  rb_define_module_function(m_rtlsdr, "get_tuner_type", turtleshell_get_tuner_type, 1);
 }
