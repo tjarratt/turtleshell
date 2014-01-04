@@ -230,9 +230,18 @@ static VALUE turtleshell_get_tuner_type(VALUE self, VALUE wrapped_device) {
   rtlsdr_dev_t *device;
   Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
 
-  hash = rb_const_get(m_rtlsdr, rb_intern("tuner_hash"));
+  hash = rb_const_get(m_rtlsdr, rb_intern("TunerTypes"));
   tuner_type = rtlsdr_get_tuner_type(device);
   return rb_hash_aref(hash, tuner_type);
+}
+
+static VALUE turtleshell_set_manual_gain(VALUE self, VALUE wrapped_device, VALUE enabled) {
+  int result;
+  rtlsdr_dev_t *device;
+  Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
+
+  result = rtlsdr_set_tuner_gain_mode(device, RTEST(enabled));
+  return INT2NUM(result);
 }
 
 void Init_librtlsdr() {
@@ -263,14 +272,14 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "set_gain", turtleshell_set_gain, 2);
   rb_define_module_function(m_rtlsdr, "get_tuner_gains", turtleshell_get_gains, 1);
   rb_define_module_function(m_rtlsdr, "get_tuner_type", turtleshell_get_tuner_type, 1);
+  rb_define_module_function(m_rtlsdr, "set_manual_gain", turtleshell_set_manual_gain, 2);
 
   tuner_hash = rb_hash_new();
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_UNKNOWN, ID2SYM(rb_intern("unknown")));
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_E4000, ID2SYM(rb_intern("e4000")));
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_FC0012, ID2SYM(rb_intern("fc0012")));
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_FC0013, ID2SYM(rb_intern("fc0013")));
-  rb_hash_aset(tuner_hash, RTLSDR_TUNER_FC2580, ID2SYM(rb_intern("fc2580")));
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_R820T, ID2SYM(rb_intern("r820t")));
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_R828D, ID2SYM(rb_intern("r828d")));
-  rb_define_const(m_rtlsdr, "tuner_hash", tuner_hash);
+  rb_define_const(m_rtlsdr, "TunerTypes", tuner_hash);
 }

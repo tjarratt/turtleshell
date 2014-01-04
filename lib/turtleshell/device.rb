@@ -57,6 +57,14 @@ module TurtleShell
       TurtleShell::RTLSDR.get_tuner_type(@device)
     end
 
+    def set_manual_gain_mode
+      TurtleShell::RTLSDR.set_manual_gain(@device, true)
+    end
+
+    def disable_manual_gain_mode
+      TurtleShell::RTLSDR.set_manual_gain(@device, false)
+    end
+
     # read specified number of complex samples from tuner
     # real and imaginary parts are normalized between [-1, 1]
     def read_samples(number_of_samples = 1024)
