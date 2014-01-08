@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'turtleshell'
-  s.version = '1.0.5'
+  s.version = '1.0.6'
   s.date = '2013-11-05'
   s.summary = 'A ruby wrapper for librtlsdr'
   s.description = 'ruby bindings for librtlsdr -- realtek USB software defined radio devices'
