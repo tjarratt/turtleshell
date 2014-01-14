@@ -4,3 +4,4 @@
 tmp
 Gemfile.lock
 .rvmrc
+ext/librtlsdr/Makefile
