@@ -13,7 +13,7 @@ unless search_paths.include?(standard_include_path) || !File.exists?(standard_in
   search_paths = [search_paths, standard_include_path].join(':')
 end
 
-unless find_header('rtl-sdr.h', search_paths) && false
+unless find_header('rtl-sdr.h', search_paths)
   puts "\n\n***************************************"
   puts "Error: could not find rtl-sdr.h"
   puts "Either rtl-sdr.h is not in your include path, or we couldn't find it"
