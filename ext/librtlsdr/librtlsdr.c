@@ -244,6 +244,22 @@ static VALUE turtleshell_set_manual_gain(VALUE self, VALUE wrapped_device, VALUE
   return INT2NUM(result);
 }
 
+static VALUE turtleshell_get_freq_correction(VALUE self, VALUE wrapped_device) {
+  rtlsdr_dev_t *device;
+  Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
+  return INT2NUM(rtlsdr_get_freq_correction(device));
+}
+
+static VALUE turtleshell_set_freq_correction(VALUE self, VALUE wrapped_device, VALUE v) {
+  rtlsdr_dev_t *device;
+  Data_Get_Struct(wrapped_device, rtlsdr_dev_t, device);
+  if (rtlsdr_set_freq_correction(device, NUM2INT(v))) {
+      rb_raise(rb_eRuntimeError, "couldn't set PPM");
+  }
+
+  return v;
+}
+
 void Init_librtlsdr() {
   VALUE tuner_hash;
   m_turtleshell = rb_define_module("TurtleShell");
@@ -273,6 +289,8 @@ void Init_librtlsdr() {
   rb_define_module_function(m_rtlsdr, "get_tuner_gains", turtleshell_get_gains, 1);
   rb_define_module_function(m_rtlsdr, "get_tuner_type", turtleshell_get_tuner_type, 1);
   rb_define_module_function(m_rtlsdr, "set_manual_gain", turtleshell_set_manual_gain, 2);
+  rb_define_module_function(m_rtlsdr, "get_freq_correction", turtleshell_get_freq_correction, 1);
+  rb_define_module_function(m_rtlsdr, "set_freq_correction", turtleshell_set_freq_correction, 2);
 
   tuner_hash = rb_hash_new();
   rb_hash_aset(tuner_hash, RTLSDR_TUNER_UNKNOWN, ID2SYM(rb_intern("unknown")));

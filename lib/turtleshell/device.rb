@@ -24,6 +24,14 @@ module TurtleShell
       new(index)
     end
 
+    def freq_correction
+      TurtleShell::RTLSDR.get_freq_correction(@device)
+    end
+
+    def freq_correction=(v)
+      TurtleShell::RTLSDR.set_freq_correction(@device, v)
+    end
+
     def sample_rate
       TurtleShell::RTLSDR.get_sample_rate(@device)
     end
