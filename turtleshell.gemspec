@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
 
   s.extensions = ['ext/librtlsdr/extconf.rb']
 
-  s.add_dependency 'rake',              '~> 10.1'
-  s.add_dependency 'rake-compiler',     '~> 0.9'
+  s.add_dependency 'rake',              '~> 13.0'
+  s.add_dependency 'rake-compiler',     '~> 1.1'
   s.add_development_dependency 'rspec', '~> 2.14'
 
   ignores  = File.readlines('.gitignore').grep(/\S+/).map(&:chomp)
