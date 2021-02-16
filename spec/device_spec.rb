@@ -1,4 +1,4 @@
-require 'turtleshell'
+require 'testhelper'
 
 describe 'TurtleShell:Device behavior' do
   it 'should return the name' do

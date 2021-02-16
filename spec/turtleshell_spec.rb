@@ -1,4 +1,4 @@
-require 'turtleshell'
+require 'testhelper'
 
 describe 'TurtleShell' do
   it 'tells you how many devices are connected' do
