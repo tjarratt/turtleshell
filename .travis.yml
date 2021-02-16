@@ -2,6 +2,9 @@ language: ruby
 bundler_args: --without development
 rvm:
   - 2.0.0
+  - 2.6
+  - 2.7
+  - 3.0 
 before_install:
   - "sudo apt-get install libusb-1.0-0-dev"
   - "git clone git://git.osmocom.org/rtl-sdr.git"
